@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from database.models.user import User
 from database.db import session
 from utils.jsonEncoder import JSONEncoder
+from werkzeug.exceptions import BadRequestKeyError
 
 users = Blueprint('users', __name__)
 
@@ -60,16 +61,23 @@ def deleteUserById(user_id):
 @users.route('/users', methods=['POST'])
 def createUser():
     try:
-        if not request.form: raise Exception('Invalid data')
+        if not request.form['email'] or not request.form['password']: raise Exception('Invalid data')
 
-        user = User(name=request.form['name'],
-                    email=request.form['email'],
-                    password=request.form['password'])
+        user = User(email=request.form['email'])
+        user.setPassword(request.form['password'])
         session.add(user)
 
         session.commit()
         session.refresh(user)
+
         return jsonify(user=JSONEncoder(user)), 201
+
+    except BadRequestKeyError:
+        return jsonify({"message": 'Some keys are missing'}), 400
+
+    except AssertionError as err:
+        return jsonify({"message": str(err)}), 400
+
     except Exception as err:
         print(err)
         return jsonify({"message": str(err)}), 500

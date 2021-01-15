@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, jsonify
 from config import Config
 from database.db import session, recreate_database
 from routes.api.user import users
+
 
 app = Flask(__name__)
 app.register_blueprint(users)
