@@ -6,6 +6,7 @@ from routes.api.user import users
 app = Flask(__name__)
 app.register_blueprint(users)
 
+
 @app.route('/')
 def hello_world():
     return '''<h1>'Hello World!'</h1>'''
@@ -16,7 +17,6 @@ def recreate(exception=None):
     if exception: print('Recreate Error! ', exception)
     recreate_database()
     return 'Recreated!', 201
-
 
 
 @app.teardown_appcontext
