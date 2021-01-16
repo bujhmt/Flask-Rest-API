@@ -9,17 +9,17 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     email = Column(String, unique=True, nullable=False, index=True)
-    password_hash = Column(String, nullable=False)
+    password = Column(String, nullable=False)
 
     def setPassword(self, password: str):
         if not password:
             raise AssertionError('Password not provided')
         if len(password) < 6 or len(password) > 50:
             raise AssertionError('Password must be between 6 and 50 characters')
-        self.password_hash = getHash(password)
+        self.password = getHash(password)
 
     def checkPassword(self, password: str):
-        return checkHash(password, self.password_hash)
+        return checkHash(password, self.password)
 
     @validates('email')
     def validate_email(self, key, email):
